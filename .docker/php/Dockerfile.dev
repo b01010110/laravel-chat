@@ -1,0 +1,19 @@
+FROM php:cli
+
+EXPOSE 8000
+WORKDIR /app
+
+# packages installation
+RUN apt update && apt install -y git zip unzip
+RUN apt clean && rm -rf /var/lib/apt/lists/*
+
+# composer installation
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> $HOME/.bashrc
+RUN composer global require laravel/installer
+
+# php extensions installation
+RUN docker-php-ext-install pdo_mysql
+
+# run laravel app
+CMD php artisan serve --host=0.0.0.0

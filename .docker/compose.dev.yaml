@@ -1,0 +1,33 @@
+name: vedagent
+
+services:
+  backend:
+    image: backend-dev
+    container_name: backend-dev
+    build:
+      context: ../
+      dockerfile: .docker/php/Dockerfile.dev
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ../:/app
+    #tty: true
+    depends_on:
+      - database
+
+  database:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: example
+    volumes:
+      - database:/var/lib/mysql
+
+volumes:
+  app:
+  database:
